@@ -1,0 +1,65 @@
+x0=0; % m
+  y0=5; % m
+  v0=10; % m/s
+  theta=45; % deg
+  g=9.81; % m/s^2
+
+  t_flight=calc_t_flight(g,v0,theta,y0)
+  range=calc_range(v0,theta,t_flight)
+  v_impact=calc_v_impact(g,v0,theta,t_flight,y0)
+
+  t=linspace(0,t_flight,30);
+  xdot0=v0*cos(pi*(theta/180));
+  ydot0=v0*sin(pi*(theta/180));
+  x=xdot0*t+x0;
+  y=-(g/2)*t.^2+ydot0*t+y0;
+  plot(x,y)
+  axis equal
+  xlabel(sprintf('Distance (m) - Range = %5.3f',range));
+  ylabel('Height (m)');
+  title(sprintf('Projectile motion: v_{impact} = %5.3f m/s',v_impact));
+   function t_flight=calc_t_flight(g,v0,theta,y0)
+
+  % calculate time of flight
+  %
+  % Usage: t_flight=calc_t_flight(g,v0,theta,y0)
+  %
+  % where: g = gravitational acceleration (positive)
+  %        v0 = initial velocity (magnitude)
+  %        theta = launch angle (degrees)
+  %        y0 = launch distance from ground
+
+  % Solve -0.5*g*t^2+v0*sin(2*pi*(theta/180))*t+y0=0
+
+  b=v0*sin(pi*(theta/180));
+  a=-g/2;
+  c=y0;
+
+  t_flight=(-b-sqrt(b^2-4*a*c))/(2*a);
+  
+  function range=calc_range(v0,theta,t_flight)
+
+  % Calculate projectile range
+  %
+  % Usage: range=calc_range(v0,theta,t_flight)
+  %
+  % where: v0 = initial velocity (magnitude)
+  %        theta = launch angle (degrees)
+  %        t_flight = time of flight
+
+  range=v0*cos(pi*(theta/180))*t_flight;
+  
+  function v_impact=calc_v_impact(g,v0,theta,t_flight,y0)
+  % Calculate projectile impact velocity
+  %
+  % Usage: v_impact=calc_v_impact(g,v0,theta,t_flight,y0)
+  %
+  % where: g = gravitational acceleration (positive)
+  %        v0 = initial velocity (magnitude)
+  %        theta = launch angle (degrees)
+  %        t_flight = time of flight
+  %        x0 = launch distance from origin
+
+  vx=v0*cos(pi*(theta/180));
+  vy=-g*t_flight+v0*sin(pi*(theta/180));
+  v_impact=sqrt(vx^2+vy^2);
